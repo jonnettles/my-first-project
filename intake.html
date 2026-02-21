@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Intake Form</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .page-header .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .page-header .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: #1a56db;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-header .logo-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: #fff;
+    }
+
+    .page-header .logo-text {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e3a5f;
+      letter-spacing: -0.3px;
+    }
+
+    .page-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1e3a5f;
+      letter-spacing: -0.5px;
+    }
+
+    .page-header p {
+      margin-top: 0.4rem;
+      color: #5a7a9a;
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(26, 86, 219, 0.08), 0 1px 4px rgba(0,0,0,0.06);
+      width: 100%;
+      max-width: 680px;
+      padding: 2.5rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #334e68;
+      letter-spacing: 0.2px;
+    }
+
+    label .required {
+      color: #e53e3e;
+      margin-left: 2px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border: 1.5px solid #d1dce8;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #1e3a5f;
+      background: #f8fafc;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #a0b3c4;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #1a56db;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.12);
+    }
+
+    .select-wrapper {
+      position: relative;
+    }
+
+    .select-wrapper::after {
+      content: '';
+      position: absolute;
+      right: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid #5a7a9a;
+      pointer-events: none;
+    }
+
+    select {
+      cursor: pointer;
+      padding-right: 2.2rem;
+    }
+
+    select option[value=""] {
+      color: #a0b3c4;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.55;
+    }
+
+    .field-error {
+      font-size: 0.78rem;
+      color: #c53030;
+      display: none;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .field-error svg {
+      flex-shrink: 0;
+      width: 13px;
+      height: 13px;
+      fill: #c53030;
+    }
+
+    .field.invalid input,
+    .field.invalid select,
+    .field.invalid textarea {
+      border-color: #e53e3e;
+      background: #fff5f5;
+    }
+
+    .field.invalid input:focus,
+    .field.invalid select:focus,
+    .field.invalid textarea:focus {
+      box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.12);
+    }
+
+    .field.invalid .field-error {
+      display: flex;
+    }
+
+    .field.valid input,
+    .field.valid select,
+    .field.valid textarea {
+      border-color: #38a169;
+    }
+
+    .divider {
+      grid-column: 1 / -1;
+      border: none;
+      border-top: 1.5px solid #e8f0f8;
+      margin: 0.25rem 0;
+    }
+
+    .section-label {
+      grid-column: 1 / -1;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #1a56db;
+      padding-bottom: 0.25rem;
+      border-bottom: 2px solid #e8f0f8;
+    }
+
+    .submit-row {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .submit-note {
+      font-size: 0.8rem;
+      color: #7a98b4;
+    }
+
+    .submit-note strong {
+      color: #e53e3e;
+    }
+
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #1a56db;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.72rem 1.75rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-submit:hover {
+      background: #1648c0;
+      box-shadow: 0 4px 12px rgba(26, 86, 219, 0.3);
+    }
+
+    .btn-submit:active {
+      transform: scale(0.98);
+    }
+
+    .btn-submit svg {
+      width: 16px;
+      height: 16px;
+      fill: #fff;
+    }
+
+    /* Success state */
+    .success-banner {
+      display: none;
+      grid-column: 1 / -1;
+      background: #f0fff4;
+      border: 1.5px solid #9ae6b4;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+
+    .success-banner .success-icon {
+      width: 48px;
+      height: 48px;
+      background: #38a169;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.75rem;
+    }
+
+    .success-banner .success-icon svg {
+      width: 26px;
+      height: 26px;
+      fill: #fff;
+    }
+
+    .success-banner h3 {
+      color: #276749;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .success-banner p {
+      color: #2f855a;
+      font-size: 0.875rem;
+      margin-top: 0.35rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 580px) {
+      .card {
+        padding: 1.75rem 1.25rem;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: 1;
+      }
+
+      .section-label {
+        grid-column: 1;
+      }
+
+      .divider {
+        grid-column: 1;
+      }
+
+      .submit-row {
+        grid-column: 1;
+        flex-direction: column-reverse;
+        align-items: stretch;
+      }
+
+      .btn-submit {
+        justify-content: center;
+      }
+
+      .success-banner {
+        grid-column: 1;
+      }
+
+      .page-header h1 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 6h-1V4c0-1.1-.9-2-2-2H3C1.9 2 1 2.9 1 4v14c0 1.1.9 2 2 2h1v2c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-15 14H3V4h14v2H7c-1.1 0-2 .9-2 2v12zm15 2H7V8h13v14z"/>
+        </svg>
+      </div>
+      <span class="logo-text">YourAgency</span>
+    </div>
+    <h1>Client Intake Form</h1>
+    <p>Tell us about your project and we'll be in touch within 1 business day.</p>
+  </header>
+
+  <main class="card">
+    <form id="intakeForm" novalidate>
+      <div class="form-grid">
+
+        <!-- Contact Information -->
+        <div class="section-label">Contact Information</div>
+
+        <div class="field" id="field-name">
+          <label for="fullName">Full Name <span class="required">*</span></label>
+          <input
+            type="text"
+            id="fullName"
+            name="fullName"
+            placeholder="Jane Smith"
+            autocomplete="name"
+          />
+          <span class="field-error">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            Please enter your full name.
+          </span>
+        </div>
+
+        <div class="field" id="field-email">
+          <label for="email">Email Address <span class="required">*</span></label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="jane@example.com"
+            autocomplete="email"
+          />
+          <span class="field-error">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            Please enter a valid email address.
+          </span>
+        </div>
+
+        <div class="field" id="field-phone">
+          <label for="phone">Phone Number <span class="required">*</span></label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            placeholder="+1 (555) 000-0000"
+            autocomplete="tel"
+          />
+          <span class="field-error">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            Please enter a valid phone number.
+          </span>
+        </div>
+
+        <div class="field" id="field-company">
+          <label for="company">Company Name</label>
+          <input
+            type="text"
+            id="company"
+            name="company"
+            placeholder="Acme Inc. (optional)"
+            autocomplete="organization"
+          />
+        </div>
+
+        <hr class="divider" />
+
+        <!-- Project Details -->
+        <div class="section-label">Project Details</div>
+
+        <div class="field" id="field-service">
+          <label for="service">Type of Service Needed <span class="required">*</span></label>
+          <div class="select-wrapper">
+            <select id="service" name="service">
+              <option value="">Select a service...</option>
+              <option value="web-design">Web Design &amp; Development</option>
+              <option value="mobile-app">Mobile App Development</option>
+              <option value="branding">Branding &amp; Identity</option>
+              <option value="seo">SEO &amp; Digital Marketing</option>
+              <option value="consulting">Strategy &amp; Consulting</option>
+              <option value="ecommerce">E-Commerce Solutions</option>
+              <option value="maintenance">Website Maintenance</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <span class="field-error">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            Please select a service type.
+          </span>
+        </div>
+
+        <div class="field" id="field-budget">
+          <label for="budget">Budget Range <span class="required">*</span></label>
+          <div class="select-wrapper">
+            <select id="budget" name="budget">
+              <option value="">Select a range...</option>
+              <option value="under-5k">Under $5,000</option>
+              <option value="5k-10k">$5,000 – $10,000</option>
+              <option value="10k-25k">$10,000 – $25,000</option>
+              <option value="25k-50k">$25,000 – $50,000</option>
+              <option value="50k-100k">$50,000 – $100,000</option>
+              <option value="over-100k">Over $100,000</option>
+              <option value="undecided">Not sure yet</option>
+            </select>
+          </div>
+          <span class="field-error">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            Please select a budget range.
+          </span>
+        </div>
+
+        <div class="field full" id="field-description">
+          <label for="description">Project Description <span class="required">*</span></label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Describe your project goals, timeline, and any specific requirements..."
+          ></textarea>
+          <span class="field-error">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            Please provide a brief project description (at least 20 characters).
+          </span>
+        </div>
+
+        <!-- Success banner (hidden until submission) -->
+        <div class="success-banner" id="successBanner">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          </div>
+          <h3>Thank you! We've received your inquiry.</h3>
+          <p>Our team will review your submission and reach out within 1 business day.</p>
+        </div>
+
+        <!-- Submit row -->
+        <div class="submit-row">
+          <p class="submit-note"><strong>*</strong> Required fields</p>
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            Submit Inquiry
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById('intakeForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const successBanner = document.getElementById('successBanner');
+
+    const validators = {
+      'field-name': () => {
+        const v = document.getElementById('fullName').value.trim();
+        return v.length >= 2;
+      },
+      'field-email': () => {
+        const v = document.getElementById('email').value.trim();
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      },
+      'field-phone': () => {
+        const v = document.getElementById('phone').value.trim().replace(/[\s\-().+]/g, '');
+        return /^\d{7,15}$/.test(v);
+      },
+      'field-service': () => document.getElementById('service').value !== '',
+      'field-budget': () => document.getElementById('budget').value !== '',
+      'field-description': () => {
+        const v = document.getElementById('description').value.trim();
+        return v.length >= 20;
+      },
+    };
+
+    function validateField(fieldId) {
+      const wrapper = document.getElementById(fieldId);
+      if (!wrapper) return true;
+      const isValid = validators[fieldId]();
+      wrapper.classList.toggle('invalid', !isValid);
+      wrapper.classList.toggle('valid', isValid);
+      return isValid;
+    }
+
+    // Live validation on blur
+    Object.keys(validators).forEach(fieldId => {
+      const wrapper = document.getElementById(fieldId);
+      if (!wrapper) return;
+      const input = wrapper.querySelector('input, select, textarea');
+      if (!input) return;
+
+      input.addEventListener('blur', () => validateField(fieldId));
+      input.addEventListener('input', () => {
+        if (wrapper.classList.contains('invalid')) validateField(fieldId);
+      });
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const fieldIds = Object.keys(validators);
+      const results = fieldIds.map(id => validateField(id));
+      const allValid = results.every(Boolean);
+
+      if (!allValid) {
+        const firstInvalid = document.querySelector('.field.invalid input, .field.invalid select, .field.invalid textarea');
+        if (firstInvalid) firstInvalid.focus();
+        return;
+      }
+
+      // Simulate submission
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" style="animation:spin 0.8s linear infinite">
+          <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+        </svg>
+        Submitting...
+      `;
+
+      setTimeout(() => {
+        // Hide all form fields visually by hiding the grid children except success banner
+        Array.from(form.querySelector('.form-grid').children).forEach(el => {
+          if (el !== successBanner) el.style.display = 'none';
+        });
+        successBanner.style.display = 'block';
+      }, 1200);
+    });
+  </script>
+
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+</body>
+</html>
